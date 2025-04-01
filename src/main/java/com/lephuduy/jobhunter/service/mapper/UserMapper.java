@@ -2,10 +2,10 @@ package com.lephuduy.jobhunter.service.mapper;
 
 import com.lephuduy.jobhunter.domain.User;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResCreateUserDTO;
+import org.mapstruct.Mapper;
 
-public class UserMapper {
-//    public ResCreateUserDTO convertToResCreateUserDTO(User user){
-//        ResCreateUserDTO res = new ResCreateUserDTO();
-//
-//    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+
+        ResCreateUserDTO convertToResCreateUserDTO(User user);
 }
