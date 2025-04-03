@@ -34,6 +34,9 @@ public class UserController {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
         ResCreateUserDTO res = this.userService.handleCreateUser(user);
+
+
+
         return ResponseEntity.created(null).body(res);
     }
 
