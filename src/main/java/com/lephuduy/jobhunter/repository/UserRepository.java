@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(@NotBlank(message = "email không được để trống") String email);
+
+    User findByEmail(String email);
 }

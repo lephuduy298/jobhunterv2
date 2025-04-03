@@ -3,7 +3,6 @@ package com.lephuduy.jobhunter.controller;
 import com.lephuduy.jobhunter.domain.User;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResCreateUserDTO;
 import com.lephuduy.jobhunter.service.UserService;
-import com.lephuduy.jobhunter.service.mapper.UserMapper;
 import com.lephuduy.jobhunter.util.error.IdInvalidException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

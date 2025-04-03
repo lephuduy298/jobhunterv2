@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-        ResCreateUserDTO convertToResCreateUserDTO(User user);
+    ResCreateUserDTO convertToResCreateUserDTO(User user);
 }
