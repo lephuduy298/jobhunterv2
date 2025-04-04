@@ -55,7 +55,7 @@ public class SecurityConfiguration {
         };
         http
                 .csrf(c -> c.disable())
-//                .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
@@ -108,8 +108,7 @@ public class SecurityConfiguration {
                 JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
         grantedAuthoritiesConverter.setAuthoritiesClaimName("lephuduy");
-        JwtAuthenticationConverter jwtAuthenticationConverter = new
-                JwtAuthenticationConverter();
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }

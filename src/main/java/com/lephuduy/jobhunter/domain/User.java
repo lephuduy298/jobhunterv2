@@ -1,6 +1,7 @@
 package com.lephuduy.jobhunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.lephuduy.jobhunter.util.SecurityUtil;
 import com.lephuduy.jobhunter.util.constant.EnumGender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -38,22 +39,20 @@ public class User {
     @Column(columnDefinition = "MEDIUMTEXT")
     private  String refreshToken;
 
-//    private Instant createdAt;
-//    private Instant updatedAt;
-//    private String createdBy;
-//    private String updatedBy;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 
-//    @PrePersist
-//    public void handleBeforeSave() {
-//        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
-//        this.createdAt = Instant.now();
-//    }
-//
-//    @PreUpdate
-//    public void handleBeforeUpdate() {
-//        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get()
-//                : "";
-//        this.updatedAt = Instant.now();
-//
-//    }
+    @PrePersist
+    public void handleBeforeSave(){
+        this.createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+    }
+
+    @PreUpdate
+    public void handleBeforeUpdate(){
+        this.updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+    }
 }
