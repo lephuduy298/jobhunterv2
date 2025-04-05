@@ -3,6 +3,7 @@ package com.lephuduy.jobhunter.service.mapper;
 import com.lephuduy.jobhunter.domain.User;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResCreateUserDTO;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResUpdateUserDTO;
+import com.lephuduy.jobhunter.domain.dto.response.user.ResUserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,19 @@ public class MapperUser {
         res.setAddress(user.getAddress());
         res.setUpdatedAt(user.getUpdatedAt());
 
+        return res;
+    }
+
+    public ResUserDTO convertToResUserDTO(User user) {
+        ResUserDTO res = new ResUserDTO();
+        res.setId(user.getId());
+        res.setAge(user.getAge());
+        res.setEmail(user.getEmail());
+        res.setName(user.getName());
+        res.setGender(user.getGender());
+        res.setAddress(user.getAddress());
+        res.setUpdatedAt(user.getUpdatedAt());
+        res.setCreatedAt(user.getCreatedAt());
         return res;
     }
 //    ResCreateUserDTO convertToResCreateUserDTO(User user);
