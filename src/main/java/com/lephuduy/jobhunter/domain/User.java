@@ -1,6 +1,7 @@
 package com.lephuduy.jobhunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lephuduy.jobhunter.util.SecurityUtil;
 import com.lephuduy.jobhunter.util.constant.EnumGender;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -43,6 +45,19 @@ public class User {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+
+    @ManyToOne
+    @JoinColumn(name="company_id")
+    private Company company;
+
+    @OneToMany(mappedBy="user")
+    @JsonIgnore
+    private List<Resume> resumes;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
 
     @PrePersist
     public void handleBeforeSave(){

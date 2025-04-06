@@ -1,6 +1,7 @@
 package com.lephuduy.jobhunter.util;
 
 import com.lephuduy.jobhunter.domain.dto.response.RestResponse;
+import com.lephuduy.jobhunter.util.anotaton.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;
@@ -10,6 +11,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.lang.reflect.Field;
 
 @ControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice {
@@ -40,7 +43,8 @@ public class FormatRestResponse implements ResponseBodyAdvice {
             return body;
         } else {
             res.setData(body);
-            res.setMessage("CALL API SUCCESSFULLY");
+            ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
+            res.setMessage(apiMessage != null ? apiMessage.value() : "CALL API SUCCESSFULLY");
         }
         return res;
     }

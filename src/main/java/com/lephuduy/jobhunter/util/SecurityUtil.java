@@ -1,5 +1,7 @@
 package com.lephuduy.jobhunter.util;
 
+import com.lephuduy.jobhunter.domain.dto.ResLoginDTO;
+import com.lephuduy.jobhunter.domain.dto.request.ReqLoginDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,7 +31,7 @@ public class SecurityUtil {
 
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
-    public String createToken(Authentication authentication){
+    public String createToken(String email, ResLoginDTO loginDTO){
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExperation, ChronoUnit.SECONDS);
 
@@ -38,8 +40,8 @@ public class SecurityUtil {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(authentication.getName())
-                .claim("lephuduy", authentication)
+                .subject(email)
+                .claim("lephuduy", loginDTO.getUser())
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

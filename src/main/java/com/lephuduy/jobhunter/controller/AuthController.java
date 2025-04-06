@@ -1,8 +1,11 @@
 package com.lephuduy.jobhunter.controller;
 
+import com.lephuduy.jobhunter.domain.User;
 import com.lephuduy.jobhunter.domain.dto.ResLoginDTO;
-import com.lephuduy.jobhunter.domain.dto.request.LoginDTO;
+import com.lephuduy.jobhunter.domain.dto.request.ReqLoginDTO;
+import com.lephuduy.jobhunter.service.UserService;
 import com.lephuduy.jobhunter.util.SecurityUtil;
+import com.lephuduy.jobhunter.util.error.IdInvalidException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,13 +25,16 @@ public class AuthController {
 
     private  final SecurityUtil securityUtil;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil){
+    private final UserService userService;
+
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService){
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO dto){
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO dto){
 //        Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
@@ -36,8 +42,18 @@ public class AuthController {
         Authentication authentication =
                 authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+        //lấy user hiện tại
         ResLoginDTO loginDTO = new ResLoginDTO();
-        String access_Token = this.securityUtil.createToken(authentication);
+        User currentUser = this.userService.getUserByUserName(dto.getEmail());
+        if(currentUser != null){
+            ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken(
+                    currentUser.getId(),
+                    currentUser.getName(),
+                    currentUser.getEmail()
+            );
+            loginDTO.setUser(userInsideToken);
+        }
+        String access_Token = this.securityUtil.createToken(authentication.getName(), loginDTO);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         loginDTO.setAccess_token(access_Token);
         return ResponseEntity.ok().body(loginDTO);
