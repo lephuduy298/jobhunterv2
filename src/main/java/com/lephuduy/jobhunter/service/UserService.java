@@ -1,5 +1,7 @@
 package com.lephuduy.jobhunter.service;
 
+import com.lephuduy.jobhunter.domain.Company;
+import com.lephuduy.jobhunter.domain.Role;
 import com.lephuduy.jobhunter.domain.User;
 import com.lephuduy.jobhunter.domain.dto.response.ResultPaginationDTO;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResCreateUserDTO;
@@ -25,12 +27,27 @@ public class UserService {
 
     private final MapperUser mapperUser;
 
-    public UserService(UserRepository userRepository, MapperUser mapperUser){
+    private final CompanyService companyService;
+
+    private final RoleService roleService;
+
+    public UserService(UserRepository userRepository, MapperUser mapperUser, CompanyService companyService, RoleService roleService){
         this.userRepository = userRepository;
         this.mapperUser = mapperUser;
+        this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public ResCreateUserDTO handleCreateUser(User user) {
+        if (user.getCompany() != null) {
+            Optional<Company> company = this.companyService.fetchById(user.getCompany().getId());
+            user.setCompany(company.isPresent() ? company.get() : null);
+        }
+
+        if (user.getRole() != null) {
+            Optional<Role> role = this.roleService.findRoleById(user.getRole().getId());
+            user.setRole(role.isPresent() ? role.get() : null);
+        }
         this.userRepository.save(user);
         return this.mapperUser.convertToResCreateUserDTO(user);
     }
@@ -54,6 +71,15 @@ public class UserService {
         currentUser.setAge(user.getAge());
         currentUser.setGender(user.getGender());
         currentUser.setAddress(user.getAddress());
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyService.fetchById(user.getCompany().getId());
+            currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+        }
+
+        if (user.getRole() != null) {
+            Optional<Role> role = this.roleService.findRoleById(user.getRole().getId());
+            currentUser.setRole(role.isPresent() ? role.get() : null);
+        }
         this.userRepository.save(currentUser);
 
         return this.mapperUser.convertToResUpdateUserDTO(currentUser);
@@ -86,8 +112,8 @@ public class UserService {
 
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setPage(userPage.getNumber() + 1);
-        meta.setPageSize(userPage.getSize());
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
         meta.setPages(userPage.getTotalPages());
         meta.setTotal(userPage.getTotalElements());
 
