@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    boolean existsByEmail(@NotBlank(message = "email không được để trống") String email);
+    boolean existsByEmail(String email);
 
     User findByEmail(String email);
+
+    User findByEmailAndRefreshToken(String email, String refreshToken);
 }

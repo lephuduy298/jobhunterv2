@@ -9,11 +9,9 @@ import com.lephuduy.jobhunter.domain.dto.response.user.ResUpdateUserDTO;
 import com.lephuduy.jobhunter.domain.dto.response.user.ResUserDTO;
 import com.lephuduy.jobhunter.repository.UserRepository;
 import com.lephuduy.jobhunter.service.mapper.MapperUser;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,7 +50,7 @@ public class UserService {
         return this.mapperUser.convertToResCreateUserDTO(user);
     }
 
-    public boolean checkExistEmail(@NotBlank(message = "email không được để trống") String email) {
+    public boolean checkExistEmail(String email) {
         return this.userRepository.existsByEmail(email);
     }
 
@@ -60,24 +58,21 @@ public class UserService {
         return this.userRepository.findByEmail(email);
     }
 
-    public boolean checkExistUserById(long id) {
-        return this.userRepository.existsById(id);
-    }
 
-    public ResUpdateUserDTO updateUser(User user) {
-        Optional<User> currentUserOptional = this.userRepository.findById(user.getId());
-        User currentUser = currentUserOptional.get();
-        currentUser.setName(user.getName());
-        currentUser.setAge(user.getAge());
-        currentUser.setGender(user.getGender());
-        currentUser.setAddress(user.getAddress());
-        if (user.getCompany() != null) {
-            Optional<Company> companyOptional = this.companyService.fetchById(user.getCompany().getId());
+    public ResUpdateUserDTO updateUser(User currentUser, User userUpdate) {
+//        Optional<User> currentUserOptional = this.userRepository.findById(user.getId());
+//        User currentUser = currentUserOptional.get();
+        currentUser.setName(userUpdate.getName());
+        currentUser.setAge(userUpdate.getAge());
+        currentUser.setGender(userUpdate.getGender());
+        currentUser.setAddress(userUpdate.getAddress());
+        if (userUpdate.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyService.fetchById(userUpdate.getCompany().getId());
             currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
         }
 
-        if (user.getRole() != null) {
-            Optional<Role> role = this.roleService.findRoleById(user.getRole().getId());
+        if (userUpdate.getRole() != null) {
+            Optional<Role> role = this.roleService.findRoleById(userUpdate.getRole().getId());
             currentUser.setRole(role.isPresent() ? role.get() : null);
         }
         this.userRepository.save(currentUser);
@@ -120,5 +115,24 @@ public class UserService {
         res.setMeta(meta);
 
         return res;
+    }
+
+    public void handleUpdateRefreshTokenOfUser(String email, String refresh_Token) {
+        User user = this.userRepository.findByEmail(email);
+
+        if(user != null){
+            user.setRefreshToken(refresh_Token);
+            this.userRepository.save(user);
+
+        }
+
+    }
+
+    public User getUserByEmailAndToken(String email, String refreshToken) {
+        return this.userRepository.findByEmailAndRefreshToken(email, refreshToken);
+    }
+
+    public Optional<User> checkExistUserById(long id) {
+        return this.userRepository.findById(id);
     }
 }

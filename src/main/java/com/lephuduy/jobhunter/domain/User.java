@@ -27,7 +27,7 @@ public class User {
 
     private String name;
 
-    @NotBlank(message = "email không được để trống")
+    @NotBlank(message = "email không được để trống 123")
     private  String email;
 
     @NotBlank(message = "password không được để trống")
