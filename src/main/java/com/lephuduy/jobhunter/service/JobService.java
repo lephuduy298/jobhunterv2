@@ -141,4 +141,7 @@ public class JobService {
         return result;
     }
 
+    public List<Job> findAllJob() {
+        return this.jobRepository.findAll();
+    }
 }
